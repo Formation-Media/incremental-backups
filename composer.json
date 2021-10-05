@@ -1,0 +1,34 @@
+
+{
+    "name": "formation-media/incremental-backups",
+    "description": "A library that creates backups of the target repository.",
+    "version": "0.1.0",
+    "keywords": ["ico", "favicon"],
+    "homepage": "https://github.com/formation-media",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Jason Millis",
+            "homepage": "https://www.jas-n.com",
+            "role": "Technical Lead"
+        }, 
+        {
+            "name": "Hector van Smirren",
+            "homepage": "https://github.com/hectovs",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/Formation-Media/incremental-backups/issues",
+        "source": "https://github.com/Formation-Media/incremental-backups"
+    },
+    "require": {
+        "php": ">=7.4.15",
+        "ext-gd": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "Incrementor.php"
+        ]
+    }
+}
