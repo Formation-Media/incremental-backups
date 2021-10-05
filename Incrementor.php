@@ -1,6 +1,8 @@
 <?php
 namespace Formation\Incrementor;
 
+require('MyRecursiveFilterIterator.php');
+
 use Throwable;
 use ZipArchive;
 
@@ -8,19 +10,19 @@ class Incrementor{
     
     private $dir;
     private $incremental;
-    private $skip;
+    private $skips;
     private $target;
 
-    public function __construct($dir,string $target='./',bool $incremental=true,array $skip=array())
+    public function __construct($dir,string $target='./',bool $incremental=true,array $skips=array())
     {
         if(!is_dir($target)){
             mkdir($target,0755,true);
         }
-        $skip[]=$target;
+        $skips[]='#'.$target.'#';
         $this->dir        =$dir;
         $this->incremental=$incremental;
         $this->target     =$target.'/'.date('Y-m-d_H-i-s').'.zip';
-        $this->skip       =$skip;
+        $this->skips       =$skips;
     }
     public function run()
     {
@@ -31,14 +33,25 @@ class Incrementor{
             if(is_file($meta_file) && $this->incremental){
                 $meta=json_decode(file_get_contents($meta_file),true);
             }
-            foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->dir)) as $fileInfo) {
+            $iterator = new \RecursiveDirectoryIterator($this->dir);
+            $filter = new \MyRecursiveFilterIterator($iterator, $this->skips);
+            $filtered_iterator = new \RecursiveIteratorIterator($filter);
+
+            foreach ($filtered_iterator as $fileInfo) {
                 if($fileInfo->isFile()){
                     $path=str_replace($this->dir.'/','',$fileInfo->getRealPath());
                     if(!array_key_exists($path,$meta)){
                         $meta[$path]=filemtime($fileInfo->getRealPath());
                         $to_backup[]=$path;
+                    } else if (filemtime($fileInfo->getRealPath()) > $meta[$path]) {
+                        $meta[$path] = filemtime($fileInfo->getRealPath()); 
+                        $to_backup[]=$path;
                     }
                 }
+            }
+            if(!$this->incremental){
+                $meta_json = json_encode($meta, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+                file_put_contents($meta_file, $meta_json);
             }
             if($to_backup){
                 $archive=new ZipArchive();
