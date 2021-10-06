@@ -30,6 +30,7 @@ class Incrementor{
             $meta     =array();
             $meta_file=str_replace('/','-',substr($this->dir,1)).'.json';
             $to_backup=array();
+            $status = [];
             if(is_file($meta_file) && $this->incremental){
                 $meta=json_decode(file_get_contents($meta_file),true);
             }
@@ -60,13 +61,15 @@ class Incrementor{
                 }
                 foreach($to_backup as $file){
                     try{
-                        $archive->addFile($file,);
+                        $result = $archive->addFile($file);
+                        $status[] = $result;
                     }catch(Throwable $t){
                         print_r($t->getMessage());
                     }
                 }
                 $archive->close();
             }
+            return $status;
         }
     }
 }
