@@ -22,9 +22,9 @@ class Incrementor{
                 line(true);
             }
         }
-        $skips[]='#'.$target.'#';
+        $skips[]=$target;
         if($this->is_laravel){
-            $skips[]='#storage/framework#';
+            $skips[]='storage/framework';
         }
         $this->dir           =$dir;
         $this->is_incremental=$is_incremental;

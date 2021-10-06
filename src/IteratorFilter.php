@@ -9,8 +9,8 @@ class IteratorFilter extends RecursiveFilterIterator {
     
     public function __construct($recursiveIter, $skips){
         $default_regex_skips = [
-            '#vendor/#',
-            '#node_modules/#', 
+            'vendor/',
+            'node_modules/', 
         ];
         $this->skips = array_merge($default_regex_skips, $skips);
         parent::__construct($recursiveIter);
@@ -18,7 +18,7 @@ class IteratorFilter extends RecursiveFilterIterator {
 
     public function accept(){
         foreach($this->skips as $skip){
-            $result = preg_match($skip, $this->current()->getPathname());
+            $result = preg_match('#'.$skip.'#', $this->current()->getPathname());
             if($result==1 ){
                 return false;
             }
