@@ -1,7 +1,7 @@
 <?php
 namespace Formation\Incrementor;
 
-require('MyRecursiveFilterIterator.php');
+require('IteratorFilter.php');
 
 use Throwable;
 use ZipArchive;
@@ -59,11 +59,10 @@ class Incrementor{
                 if ($archive->open($this->target, ZipArchive::CREATE)!==TRUE) {
                     exit("cannot open <$this->target>\n");
                 }
-                $status['to_backup'] = $to_backup;
                 foreach($to_backup as $file){
                     try{
                         $result = $archive->addFile($file);
-                        $status['result'][] = $result;
+                        $status['result'][$to_backup] = $result;
                     }catch(Throwable $t){
                         print_r($t->getMessage());
                         $tatus['errors'][] = $t->getMessage();
@@ -71,6 +70,8 @@ class Incrementor{
                 }
                 $archive->close();
             }
+
+            $status['archive'] = $archive->getStatusString();
             return $status;
         }
     }
