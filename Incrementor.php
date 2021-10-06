@@ -63,12 +63,12 @@ class Incrementor{
                 foreach($to_backup as $file){
                     try{
                         $result = $archive->addFile($file);
-                        $status['result'][$to_backup] = $result;
+                        $status['result'][$file] = $result;
                     }catch(Throwable $t){
                         print_r($t->getMessage());
                         $status['errors'][] = $t->getMessage();
                     }
-                    $status['archive'][$to_backup] = $archive->getStatusString();
+                    $status['archive'][$file] = $archive->getStatusString();
                 }
                 // file_put_contents(public_path($this->target_dir).'status.json', json_encode($status, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
                 $archive->close();
