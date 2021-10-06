@@ -59,12 +59,14 @@ class Incrementor{
                 if ($archive->open($this->target, ZipArchive::CREATE)!==TRUE) {
                     exit("cannot open <$this->target>\n");
                 }
+                $status['to_backup'] = $to_backup;
                 foreach($to_backup as $file){
                     try{
                         $result = $archive->addFile($file);
-                        $status[] = $result;
+                        $status['result'][] = $result;
                     }catch(Throwable $t){
                         print_r($t->getMessage());
+                        $tatus['errors'][] = $t->getMessage();
                     }
                 }
                 $archive->close();
