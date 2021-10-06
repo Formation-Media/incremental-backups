@@ -1,7 +1,6 @@
 <?php
 namespace Formation\Incrementor;
 
-use Formation\Incrementor\IteratorFilter;
 use Throwable;
 use ZipArchive;
 

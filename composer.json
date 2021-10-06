@@ -3,10 +3,10 @@
     "name": "formation-media/incremental-backups",
     "description": "A library that creates backups of the target repository.",
     "type": "project",
-    "version": "0.1.6",
+    "version": "0.1.8",
     "keywords": ["zip", "backup", "incremental"],
     "homepage": "https://github.com/Formation-Media/incremental-backups",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Jason Millis",
@@ -26,12 +26,11 @@
     },
     "require": {
         "php": ">=7.4.0",
-        "ext-gd": "*",
         "ext-zip": "*"
     },
     "autoload": {
-        "classmap": [
-            "Incrementor.php"
-        ]
+        "psr-4": {
+            "Formation\\Incrementor\\": "src/"
+        }
     }
 }
