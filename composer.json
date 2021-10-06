@@ -23,7 +23,7 @@
         "source": "https://github.com/Formation-Media/incremental-backups"
     },
     "require": {
-        "php": ">=7.4.13",
+        "php": ">=7.4.0",
         "ext-gd": "*"
     },
     "autoload": {
