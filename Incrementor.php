@@ -65,13 +65,14 @@ class Incrementor{
                         $status['result'][$to_backup] = $result;
                     }catch(Throwable $t){
                         print_r($t->getMessage());
-                        $tatus['errors'][] = $t->getMessage();
+                        $status['errors'][] = $t->getMessage();
                     }
+                    $status['archive'][$to_backup] = $archive->getStatusString();
                 }
+                
                 $archive->close();
             }
 
-            $status['archive'] = $archive->getStatusString();
             return $status;
         }
     }
