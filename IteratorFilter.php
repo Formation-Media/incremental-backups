@@ -1,6 +1,9 @@
 <?php 
+namespace Formation\Incrementor;
 
-class MyRecursiveFilterIterator extends RecursiveFilterIterator {
+use RecursiveFilterIterator;
+
+class IteratorFilter extends RecursiveFilterIterator {
 
     protected $skips;
     

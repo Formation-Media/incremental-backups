@@ -35,7 +35,7 @@ class Incrementor{
                 $meta=json_decode(file_get_contents($meta_file),true);
             }
             $iterator = new \RecursiveDirectoryIterator($this->dir);
-            $filter = new \MyRecursiveFilterIterator($iterator, $this->skips);
+            $filter = new \Formation\Incrementor\IteratorFilter($iterator, $this->skips);
             $filtered_iterator = new \RecursiveIteratorIterator($filter);
 
             foreach ($filtered_iterator as $fileInfo) {
