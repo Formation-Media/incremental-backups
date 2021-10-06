@@ -19,6 +19,7 @@
             "role": "Junior Developer"
         }
     ],
+    "minimum-stability": "dev",
     "support": {
         "issues": "https://github.com/Formation-Media/incremental-backups/issues",
         "source": "https://github.com/Formation-Media/incremental-backups"
