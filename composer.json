@@ -3,7 +3,7 @@
     "name": "formation-media/incremental-backups",
     "description": "A library that creates backups of the target repository.",
     "type": "project",
-    "version": "0.1.5",
+    "version": "0.1.4",
     "keywords": ["zip", "backup", "incremental"],
     "homepage": "https://github.com/Formation-Media/incremental-backups",
     "license": "GPL-2.0+",
