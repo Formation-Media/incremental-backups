@@ -5,33 +5,40 @@ use Throwable;
 use ZipArchive;
 
 class Incrementor{
-    
+
     private $dir;
-    private $incremental;
+    private $is_incremental;
+    private $is_laravel;
     private $skips;
     private $target;
 
-    public function __construct($dir,string $target='./',bool $incremental=true,array $skips=array())
+    public function __construct($dir,string $target='./',bool $is_incremental=true,array $skips=array())
     {
+        $this->is_laravel=defined('LARAVEL_START');
         if(!is_dir($target)){
-            mkdir($target,0755,true);
+            if($this->is_laravel){
+                \Illuminate\Support\Facades\Storage::makeDirectory($target);
+            }else{
+                line(true);
+            }
         }
         $skips[]='#'.$target.'#';
-        $this->dir        =$dir;
-        $this->incremental=$incremental;
-        $this->target     =$target.'/'.date('Y-m-d_H-i-s').'.zip';
-        $this->skips       =$skips;
-        $this->directory = $target;
-        $this->target_dir = $target;
+        if($this->is_laravel){
+            $skips[]='#storage/framework#';
+        }
+        $this->dir           =$dir;
+        $this->is_incremental=$is_incremental;
+        $this->target        =$target.'/'.date('Y-m-d_H-i-s').($is_incremental?'-incremental':'').'.zip';
+        $this->skips         =$skips;
     }
     public function run()
     {
         if(is_dir($this->dir)){
             $meta     =array();
-            $meta_file=str_replace('/','-',substr($this->dir,1)).'.json';
+            $meta_file=dirname($this->target).'/meta.json';
             $to_backup=array();
             $status = [];
-            if(is_file($meta_file) && $this->incremental){
+            if(is_file($meta_file) && $this->is_incremental){
                 $meta=json_decode(file_get_contents($meta_file),true);
             }
             $iterator = new \RecursiveDirectoryIterator($this->dir);
@@ -44,31 +51,38 @@ class Incrementor{
                         $meta[$path]=filemtime($fileInfo->getRealPath());
                         $to_backup[]=$path;
                     } else if (filemtime($fileInfo->getRealPath()) > $meta[$path]) {
-                        $meta[$path] = filemtime($fileInfo->getRealPath()); 
+                        $meta[$path] = filemtime($fileInfo->getRealPath());
                         $to_backup[]=$path;
                     }
                 }
             }
-            if(!$this->incremental){
-                $meta_json = json_encode($meta, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
-                file_put_contents($meta_file, $meta_json);
+            $meta=json_encode($meta, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+            if($this->is_laravel){
+                \Illuminate\Support\Facades\Storage::put($meta_file,$meta);
+            }else{
+                line(true);
             }
             if($to_backup){
                 $archive=new ZipArchive();
-                if ($archive->open($this->target, ZipArchive::CREATE)!==TRUE) {
+                if($this->is_laravel){
+                    $status=$archive->open(\Illuminate\Support\Facades\Storage::path($this->target), ZipArchive::CREATE);
+                }else{
+                    line(true);
+                }
+                if ($status!==TRUE) {
                     exit("cannot open <$this->target>\n");
                 }
                 foreach($to_backup as $file){
                     try{
-                        $result = $archive->addFile($file);
-                        $status['result'][$file] = $result;
+                        if($this->is_laravel){
+                            $archive->addFile(base_path($file),$file);
+                        }else{
+                            line(true);
+                        }
                     }catch(Throwable $t){
-                        print_r($t->getMessage());
-                        $status['errors'][] = $t->getMessage();
+                        \Log::error($t->getMessage());
                     }
-                    $status['archive'][$file] = $archive->getStatusString();
                 }
-                file_put_contents(public_path($this->target_dir).'status.json', json_encode($status, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
                 $archive->close();
             }
             return $status;
