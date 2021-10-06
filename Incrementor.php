@@ -1,8 +1,7 @@
 <?php
 namespace Formation\Incrementor;
 
-require('IteratorFilter.php');
-
+use Formation\Incrementor\IteratorFilter;
 use Throwable;
 use ZipArchive;
 
@@ -37,7 +36,7 @@ class Incrementor{
                 $meta=json_decode(file_get_contents($meta_file),true);
             }
             $iterator = new \RecursiveDirectoryIterator($this->dir);
-            $filter = new \Formation\Incrementor\IteratorFilter($iterator, $this->skips);
+            $filter = new IteratorFilter($iterator, $this->skips);
             $filtered_iterator = new \RecursiveIteratorIterator($filter);
             foreach ($filtered_iterator as $fileInfo) {
                 if($fileInfo->isFile()){
@@ -70,7 +69,7 @@ class Incrementor{
                     }
                     $status['archive'][$file] = $archive->getStatusString();
                 }
-                // file_put_contents(public_path($this->target_dir).'status.json', json_encode($status, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+                file_put_contents(public_path($this->target_dir).'status.json', json_encode($status, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
                 $archive->close();
             }
             return $status;
