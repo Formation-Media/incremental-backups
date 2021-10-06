@@ -23,6 +23,8 @@ class Incrementor{
         $this->incremental=$incremental;
         $this->target     =$target.'/'.date('Y-m-d_H-i-s').'.zip';
         $this->skips       =$skips;
+        $this->directory = $target;
+        $this->target_dir = $target;
     }
     public function run()
     {
@@ -37,7 +39,6 @@ class Incrementor{
             $iterator = new \RecursiveDirectoryIterator($this->dir);
             $filter = new \Formation\Incrementor\IteratorFilter($iterator, $this->skips);
             $filtered_iterator = new \RecursiveIteratorIterator($filter);
-
             foreach ($filtered_iterator as $fileInfo) {
                 if($fileInfo->isFile()){
                     $path=str_replace($this->dir.'/','',$fileInfo->getRealPath());
@@ -69,10 +70,9 @@ class Incrementor{
                     }
                     $status['archive'][$to_backup] = $archive->getStatusString();
                 }
-                
+                // file_put_contents(public_path($this->target_dir).'status.json', json_encode($status, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
                 $archive->close();
             }
-
             return $status;
         }
     }
