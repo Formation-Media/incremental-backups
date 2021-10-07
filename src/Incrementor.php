@@ -12,7 +12,7 @@ class Incrementor{
     private $skips;
     private $target;
 
-    public function __construct($dir,string $target='./',bool $is_incremental=true,array $skips=array())
+    public function __construct($dir,string $target='./',array $skips=array())
     {
         $this->is_laravel=defined('LARAVEL_START');
         if($this->is_laravel){
@@ -29,11 +29,10 @@ class Incrementor{
             $skips[]='storage/framework';
         }
         $this->dir           =$dir;
-        $this->is_incremental=$is_incremental;
         $this->target        =$target;
         $this->skips         =$skips;
     }
-    public function run()
+    public function run(bool $is_incremental=true)
     {
         if(is_dir($this->dir)){
             $archive          =new ZipArchive();
@@ -47,7 +46,7 @@ class Incrementor{
                 'full' =>'',
                 'files'=>[]
             );
-            if($this->is_incremental){
+            if($is_incremental){
                 if($this->is_laravel){
                     $meta=json_decode(Storage::get($meta_file));
                 }else{
