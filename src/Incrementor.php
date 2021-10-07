@@ -7,7 +7,6 @@ use ZipArchive;
 class Incrementor{
 
     private $dir;
-    private $is_incremental;
     private $is_laravel;
     private $skips;
     private $target;
