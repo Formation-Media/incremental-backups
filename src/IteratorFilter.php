@@ -1,32 +1,36 @@
-<?php 
+<?php
 namespace Formation\Incrementor;
 
 use RecursiveFilterIterator;
 
-class IteratorFilter extends RecursiveFilterIterator {
+class IteratorFilter extends RecursiveFilterIterator
+{
 
     protected $skips;
     
-    public function __construct($recursiveIter, $skips){
+    public function __construct($recursiveIter, $skips)
+    {
         $default_regex_skips = [
             'vendor/',
-            'node_modules/', 
+            'node_modules/',
         ];
         $this->skips = array_merge($default_regex_skips, $skips);
         parent::__construct($recursiveIter);
     }
 
-    public function accept(){
-        foreach($this->skips as $skip){
+    public function accept()
+    {
+        foreach ($this->skips as $skip) {
             $result = preg_match('#'.$skip.'#', $this->current()->getPathname());
-            if($result==1 ){
+            if ($result == 1) {
                 return false;
             }
         }
         return true;
     }
 
-    public function getChildren(){
+    public function getChildren()
+    {
         return new self($this->getInnerIterator()->getChildren(), $this->skips);
     }
 }
