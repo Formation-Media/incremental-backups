@@ -59,9 +59,6 @@ class Incrementor
                     $zip_name     = $now;
                     $meta['full'] = $now;
                 }
-                if ($meta['files']) {
-                    $zip_name .= '-incremental';
-                }
                 $zip_name .= '.zip';
             } else {
                 $zip_name     = $now.'.zip';
@@ -122,7 +119,10 @@ class Incrementor
             }
             if ($full) {
                 ksort($full);
-                $deletes = array_diff($full, array_slice($full, -$keep, $keep, true));
+                $deletes = array_diff(
+                    $full,
+                    array_slice($full, -$keep, $keep, true)
+                );
                 if ($deletes) {
                     foreach ($deletes as $delete) {
                         if ($incrementals = glob(dirname($delete).'/'.basename($delete, '.zip').'___*.zip')) {
